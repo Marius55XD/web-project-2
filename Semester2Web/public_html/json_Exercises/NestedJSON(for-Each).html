@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Nested JSON object example</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <script>
+            countryQuizData = {
+                name: "Countries Quiz",
+                description: "EU and other countries quiz",
+                rounds:
+                        [
+                            {
+                                name: "The EU",
+                                questions:
+                                        [
+                                            {
+                                                text: "How many countries are there in the EU?",
+                                                correct: 1,
+                                                choices:
+                                                        [
+                                                            "26",
+                                                            "27",
+                                                            "28"
+                                                        ]
+                                            },
+                                            {
+                                                text: "Which EU country has the largest population?",
+                                                correct: 1,
+                                                choices:
+                                                        [
+                                                            "France",
+                                                            "Germany"
+                                                        ]
+                                            },
+                                            {
+                                                text: "Which EU country has the smallest population?",
+                                                correct: 2,
+                                                choices:
+                                                        [
+                                                            "Luxemburg",
+                                                            "Cyprus",
+                                                            "Malta"
+                                                        ]
+                                            },
+                                            {
+                                                text: "What is the approximate population of the EU?",
+                                                correct: 1,
+                                                choices:
+                                                        [
+                                                            "400 million",
+                                                            "450 million",
+                                                            "500 million",
+                                                            "550 million",
+                                                            "600 million"
+                                                        ]
+                                            }
+                                        ]
+                            },
+                            {
+                                name: "World Wide",
+                                questions:
+                                        [
+                                            {
+                                                text: "Which country has the largest population?",
+                                                correct: 2,
+                                                choices:
+                                                        [
+                                                            "Russia",
+                                                            "India",
+                                                            "China",
+                                                            "USA"
+                                                        ]
+                                            },
+                                            {
+                                                text: "Which country occupies the largest area?",
+                                                correct: 0,
+                                                choices:
+                                                        [
+                                                            "Russia",
+                                                            "India",
+                                                            "China"
+                                                        ]
+                                            }
+                                        ]
+                            }
+                        ]
+            }
+
+
+            function viewJSONData()
+            {
+
+                let htmlString = `<ul>`
+
+                countryQuizData.rounds.forEach(round =>
+                {
+                    htmlString += `<li>${round.name}</li>`
+
+                    htmlString += `<ul>`
+                    round.questions.forEach(question =>
+                    {
+                        htmlString += `<li>${question.text}</li>`
+                        htmlString += `<ul>`
+                        question.choices.forEach((choice, index) =>
+                        {
+                          htmlString += `<li style=${index === question.correct}></li>`
+                        })
+                        htmlString += `</ul>`
+                    })
+
+                    htmlString += `</ul>`
+                })
+
+                htmlString += `</ul>`
+                document.getElementById(`quiz`).innerHTML = htmlString
+            }
+        </script>
+    </head>
+
+    <body onload="viewJSONData()">
+        <div id = "quiz"></div>
+    </body>
+</html>

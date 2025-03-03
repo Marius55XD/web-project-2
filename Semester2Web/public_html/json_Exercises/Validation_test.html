@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Course notes example code</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <meta http-equiv="Content-Language" content="en" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>
+            .errorMessage
+            {
+                color:red;
+                margin-left:80px;
+            }
+
+            label
+            {
+                min-width:80px;
+                display:inline-block;
+            }            
+        </style>
+
+        <script>
+            let formWasSubmittedAtLeastOnce = false // set this to true when the user clicks the submit button
+            
+            /* Each input element that needs to be validated needs its own validation function */
+            function isNameValid()
+            {
+				if(!formWasSubmittedAtLeastOnce)
+                {
+                    return true
+                }
+				
+                let errorMessage = ""
+                // test to see if the name is not empty
+                if (document.getElementById("name").value.length === 0)
+                {
+                    errorMessage += "<div>Name cannot be empty</div>"
+                }
+
+                document.getElementById("nameErrorMessage").innerHTML = errorMessage
+                return (errorMessage.length === 0)
+
+            }
+
+            function isAddressValid()
+            {
+                if(!formWasSubmittedAtLeastOnce)
+                {
+                    return true
+                }
+				
+                let errorMessage = ""
+                // test to see if the address is not empty
+                if (document.getElementById("address").value.length === 0)
+                {
+                    errorMessage += "<div>Address cannot be empty</div>"
+                }
+
+                // does the address contain at least two lines
+                if (document.getElementById("address").value.indexOf("\n") === -1)
+                {
+                    errorMessage += "<div>Address must contain at least two address lines</div>"
+                }
+
+                document.getElementById("addressErrorMessage").innerHTML = errorMessage
+                return (errorMessage.length === 0)
+            }
+
+            function isPhoneValid()
+            {
+				if(!formWasSubmittedAtLeastOnce)
+                {
+                    return true
+                }				
+				
+                let errorMessage = ""
+                // test to see if the phone number is of length 7
+                if (document.getElementById("phone").value.length !== 7)
+                {
+                    errorMessage += "<div>Phone number must be seven digits long</div>"
+                }
+
+                // test to see if the phone number only contains digits
+                let pattern = /^\d+$/
+                if (pattern.test(document.getElementById("phone").value) === false)
+                {
+                    errorMessage += "<div>Phone number can only contain digits</div>"
+                }
+
+
+                document.getElementById("phoneErrorMessage").innerHTML = errorMessage
+                return (errorMessage.length === 0)
+            }
+            /************************************************************************************/
+
+
+            /* The form needs one main wrapper function that will call each of the input element validation functions above */
+            function isFormValid()
+            {
+                formWasSubmittedAtLeastOnce = true
+                /* Validate all of the input elements */
+                
+                
+                let nameIsValid = isNameValid()
+                let addressIsValid = isAddressValid()
+                let phoneIsValid = isPhoneValid()
+
+                /* If ALL of the element validation functions pass, then the form is valid */
+                if (nameIsValid && addressIsValid && phoneIsValid)
+                {
+                    return true
+                }
+                else /* If ANY of the element validation functions fail, then the form fails */
+                {
+                    return false
+                }
+            }
+        </script>
+    </head>
+
+    <body>
+        <form action = "form_demo.html" onsubmit = "return isFormValid()">
+            <label for = "name">Name:</label>
+            <input type = "text" id = "name" name = "name" onkeyup="isNameValid()"><div class="errorMessage" id = "nameErrorMessage"></div>
+            <br>
+
+            <label for = "address">Address:</label>
+            <textarea rows = "5" id = "address" name = "address" onkeyup="isAddressValid()"></textarea><div class="errorMessage" id = "addressErrorMessage"></div>
+            <br>
+
+            <label for = "phone">Phone:</label>
+            <input type = "tel" id = "phone" name = "phone" onkeyup="isPhoneValid()"><div class="errorMessage" id="phoneErrorMessage"></div>
+            <br>
+
+            <input type = "submit">
+        </form>
+    </body>
+</html>

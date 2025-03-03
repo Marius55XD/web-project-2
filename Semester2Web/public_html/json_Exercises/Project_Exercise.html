@@ -1,0 +1,147 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Course notes example code</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <meta http-equiv="Content-Language" content="en" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>
+            #materialsTable td,
+            #materialsTable th
+            {
+                min-width:100px;
+                text-align: left;
+            }
+
+            #materialsTable th
+            {
+                cursor:pointer;
+
+            }
+
+            #materialsTable th:hover
+            {
+                color:#888;
+            }
+        </style>
+
+        <script>
+            
+        window.onload = () =>
+        {  
+            let url = `./json/materials.json`      /* name of the JSON file */
+
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(jsonData => 
+            {               
+                
+                data = {...new Set(jsonData.materials)}
+                console.log("Materials",data)
+                
+                
+                
+                
+                //displayCheckboxes('types', typeCheckboxes);displayRecyclingTable()
+            })
+            
+       }
+       
+    
+          let data = []
+        
+            let keys = Object.keys(data[0])
+            
+            // Get the unique set of material types (in this example, IT, HR, and Accounts
+            let types = data.map(material => material.role)
+            let typeCheckboxes = [...new Set(types)].sort()                      
+
+            // Keep track of the sort order and sort field. 
+            // Initially set the sort order to assending and sort field to forename
+            let sortAssendingOrder = true
+            let lastSortColumnName = "forename"
+                        
+            // Initialise the search value to be empty
+            let searchValue = ""
+			
+            // Display the unique types (in this example, HR, IT, and Accounts) as a set of HTML checkboxes
+            function displayCheckboxes(divName,checkboxes)
+            {
+                let htmlString = ""
+                checkboxes.forEach(role => htmlString += `<label for="${role}">${role}</label><input id="${role}" type="checkbox" checked="true" onclick="displayRecyclingTable()">`)
+                document.getElementById(divName).innerHTML = htmlString
+            } 
+			
+            // search() will be called whenever the user changes the value in the HTML search box 
+            function search(value)
+            {
+                searchValue = value
+                displayRecyclingTable()
+            }
+            
+            // Display the table based on the unique types and search
+            function displayRecyclingTable()
+            {
+                // filter by search
+                let DataToDisplay = data.filter(material => (material.forename.toLowerCase().includes(searchValue.toLowerCase()) ||
+                                                                       material.surname.toLowerCase().includes(searchValue.toLowerCase())))
+                
+                // filter by role
+                let filteredTypes = typeCheckboxes.filter(role => document.getElementById(role).checked)
+                DataToDisplay = DataToDisplay.filter(material => filteredTypes.includes(material.role))
+                
+                // create table HTML string
+                let arrow = sortAssendingOrder === true ? "▲" : "▼"
+                let htmlString = `<table id="materialsTable"><tr>`
+                keys.forEach(key => htmlString += `<th onclick=sort("${key}")>${key}${lastSortColumnName === key ? arrow : ""}</th>`)
+                htmlString += `</tr>`
+
+                DataToDisplay.forEach(material => {
+                    htmlString += `<tr>`
+
+                    keys.forEach(key => htmlString += `<td>${material[key]}</td>`)
+
+                    htmlString += `</tr>`
+                })
+                
+                htmlString += `</table>`
+
+                // display table 
+                document.getElementById("materialTable").innerHTML = htmlString
+            }
+
+            // Sort the materials based on the sort direction and sort field
+            function sort(key)
+            {
+                if (lastSortColumnName === key)
+                {
+                    sortAssendingOrder = !sortAssendingOrder
+                }
+                else
+                {
+                    lastSortColumnName = key
+                    sortAssendingOrder = true
+                }
+
+                if (sortAssendingOrder)
+                {
+                    data.sort((a, b) => a[key] < b[key] ? -1 : 1)
+                }
+                else
+                {
+                    data.sort((a, b) => a[key] < b[key] ? 1 : -1)
+                }
+                displayRecyclingTable()
+            }
+        </script>
+    </head>
+
+    <body>
+        <label for="search">Search:</label><input type="search" id="search" oninput="search(this.value)">
+        <div id="types"></div>
+        <div id="materialTable"></div>
+    </body>
+</html>

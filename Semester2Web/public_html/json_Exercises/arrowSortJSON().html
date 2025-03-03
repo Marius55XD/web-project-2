@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Course notes example code</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <meta http-equiv="Content-Language" content="en" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>
+            #employeesTable td,
+            #employeesTable th 
+            {
+                min-width: 100px;
+                text-align: left;
+            }
+
+            #employeesTable th 
+            {
+                cursor: pointer;
+            }
+
+            #employeesTable th:hover 
+            {
+                color: #888;
+            }
+        </style>
+
+        <script>
+            window.addEventListener("load", function () {
+                displayCheckboxes();
+                displayEmployeesTable();
+      
+            });
+
+            let employees = [
+                {forename: "Ann", surname: "Connolly", role: "IT", salary: 50000, gender: "female"},
+                {forename: "Dennis", surname: "Brown", role: "IT", salary: 45000, gender: "male"},
+                {forename: "Cathy", surname: "Eagan", role: "HR", salary: 55000, gender: "female"},
+                {forename: "Brian", surname: "Anglesey", role: "Accounts", salary: 5000, gender: "male"},
+                {forename: "Emma", surname: "Doherty", role: "HR", salary: 60000, gender: "female"}
+            ];
+
+            let employeesFiltered = [...employees];
+            let searchValue = "";
+            let keys = Object.keys(employees[0]);
+            let sortAssendingOrder = true;
+            let lastSortColumnName = "forename";
+
+            function searchSort() 
+            {
+                searchValue = document.getElementById("search").value;
+                employeesFiltered = employees.filter(employee =>
+                    employee.forename.toLowerCase().includes(searchValue.toLowerCase())
+                );
+                displayEmployeesTable();
+            }
+
+            function displayEmployeesTable() 
+            {
+                
+                employeesFiltered = [...employees];
+
+                // Filter by role
+                employeesFiltered = employeesFiltered.filter(employee => 
+                document.getElementById(employee.role)?.checked
+                );
+
+
+                // Create table HTML
+                let htmlString = `<table id="employeesTable">`;
+                let arrow = sortAssendingOrder ? "🡅" : "🡇";
+
+                htmlString += `<tr>`;
+                keys.forEach(key =>
+                    htmlString += `<th onclick=sort("${key}")>${key}${lastSortColumnName === key ? arrow : ""}</th>`
+                );
+                htmlString += `</tr>`;
+
+                employeesFiltered.forEach(employee => {
+                    htmlString += `<tr>`;
+                    keys.forEach(key => htmlString += `<td>${employee[key]}</td>`);
+                    htmlString += `</tr>`;
+                });
+
+                htmlString += `</table>`;
+
+                document.getElementById("employeeTable").innerHTML = htmlString;
+            }
+
+            function sort(key) 
+            {
+                sortAssendingOrder = lastSortColumnName === key ? !sortAssendingOrder : true;
+                lastSortColumnName = key;
+
+                employeesFiltered.sort((a, b) =>
+                    a[key] > b[key] ? (sortAssendingOrder ? 1 : -1) : (sortAssendingOrder ? -1 : 1)
+                );
+
+                displayEmployeesTable();
+            }
+
+            function displayCheckboxes() 
+            {
+                let uniqueRoles = [...new Set(employees.map(employee => employee.role))].sort();
+
+                let htmlString = "";
+                uniqueRoles.forEach(role =>
+                    htmlString += `<label for="${role}">${role}</label><input id="${role}" type="checkbox" checked onclick="displayEmployeesTable()">`
+                );
+
+                document.getElementById("roles").innerHTML = htmlString;
+            }
+        </script>
+    </head>
+
+    <body>
+        <form oninput="searchSort()">
+            <input type="text" name="search" id="search" placeholder="Search.." />
+        </form>
+        <div id="roles"></div>
+        <div id="employeeTable"></div>
+    </body>
+</html>

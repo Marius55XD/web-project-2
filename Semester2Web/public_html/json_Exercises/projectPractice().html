@@ -1,0 +1,248 @@
+<!DOCTYPE html> 
+<html> 
+    <head>
+        <title>Course notes example code</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <meta http-equiv="Content-Language" content="en" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <style>
+            #carsTable
+            {
+                margin-top:30px;
+                width:600px;
+                margin-left:auto;
+                margin-right:auto;
+                border-collapse:collapse;
+            }
+
+            #carsTable th
+            {
+                text-align: left;
+                background-color:#aaa;
+                color:#fff;
+            }
+
+            #carsTable th,
+            #carsTable td
+            {
+                padding:5px;
+            }
+
+            #carsTable .alignRight
+            {
+                text-align:right;
+            }
+
+            #carsTable tbody
+            {
+                border:thin solid #aaa;
+            }
+
+            #carsTable tbody tr:nth-child(odd)
+            {
+                background-color: #ffa;
+            }
+
+            #carsTable tbody tr:nth-child(even)
+            {
+                background-color: #ffe;
+            }
+
+            #add, #modify, #delete
+            {
+                display: none;
+            }
+        </style>
+
+        <script>
+            let cars = [
+                {id: 0, model: "Avensis", colour: "Red", year: 2020, price: 30000},
+                {id: 1, model: "Yaris", colour: "Green", year: 2010, price: 2000},
+                {id: 2, model: "Corolla", colour: "Red", year: 2019, price: 20000},
+                {id: 3, model: "Avensis", colour: "Silver", year: 2018, price: 20000},
+                {id: 4, model: "Camry", colour: "White", year: 2020, price: 50000}]
+
+            let uniqueId = cars.length
+
+            function displayCars(selectedCars) {
+                let htmlString = `<table id=carsTable>
+                        <tr>
+                          <th>ID</th>
+                          <th>Model</th>
+                          <th>Colour</th>
+                          <th class=alignRight>Year</th>
+                          <th class=alignRight>Price</th>
+                          <th>Actions</th>
+                        </tr>`;
+
+                selectedCars.forEach(car => {
+                    htmlString += `<tr>
+                         <td>${car.id}</td>
+                         <td>${car.model}</td>
+                         <td>${car.colour}</td>
+                         <td class=alignRight>${car.year}</td>
+                         <td class=alignRight>${car.price}</td>
+                         <td>
+                             <input type="button" value="Modify" 
+                                 onclick="modifyNewCarDisplay(${car.id}, '${car.model}', '${car.colour}', ${car.year}, ${car.price})">
+                             <input type="button" value="Delete" 
+                                 onclick="deleteCar(${car.id})">
+                         </td>
+                       </tr>`;
+                });
+
+                document.getElementById("selectedCarsTable").innerHTML = htmlString;
+            }
+            function searchCarsByID(id)
+            {
+                const selectedCars = cars.filter(car => car.id === id)
+
+                displayCars(selectedCars)
+                document.getElementById("id").value = ""
+            }
+
+            function searchCarsByModel(model)
+            {
+                const selectedCars = cars.filter(car => car.model === model)
+
+                displayCars(selectedCars)
+                document.getElementById("searchModel").value = ""
+            }
+
+            function addCar(model, colour, year, price)
+            {
+                let newCar = {id: uniqueId, model: model, colour: colour, year: year, price: price}
+                cars.push(newCar)
+
+                uniqueId++
+
+
+                document.getElementById("addModel").value = ""
+                document.getElementById("addColour").value = ""
+                document.getElementById("addYear").value = ""
+                document.getElementById("addPrice").value = ""
+
+                document.getElementById("add").style.display = "none";
+
+                document.getElementById("selectedCarsTable").style.display = "block";
+
+
+                displayCars(cars)
+            }
+
+            function modifyCar(id, model, colour, year, price) {
+                cars.forEach(car => {
+                    if (car.id === id) {
+                        car.model = model;
+                        car.colour = colour;
+                        car.year = year;
+                        car.price = price;
+                    }
+                });
+
+                // Clear input fields
+                document.getElementById("modifyId").value = "";
+                document.getElementById("modifyModel").value = "";
+                document.getElementById("modifyColour").value = "";
+                document.getElementById("modifyYear").value = "";
+                document.getElementById("modifyPrice").value = "";
+
+                // Hide modify form and show main table
+                document.getElementById("modify").style.display = "none";
+                document.getElementById("selectedCarsTable").style.display = "block";
+
+                // Refresh the table display
+                displayCars(cars);
+            }
+
+            function deleteCar(id)
+            {
+                cars = cars.filter(car => car.id !== id); // Remove the car with the matching ID
+
+                // Refresh the table to reflect changes
+                displayCars(cars);
+            }
+
+            function addNewCarDisplay()
+            {
+                document.getElementById("add").style.display = "block";
+
+                document.getElementById("selectedCarsTable").style.display = "none";
+            }
+
+            function modifyNewCarDisplay(id, model, colour, year, price)
+            {
+
+
+                document.getElementById("modify").style.display = "block";
+
+                document.getElementById("selectedCarsTable").style.display = "none";
+
+                document.getElementById("modifyId").value = id;
+                document.getElementById("modifyModel").value = model;
+                document.getElementById("modifyColour").value = colour;
+                document.getElementById("modifyYear").value = year;
+                document.getElementById("modifyPrice").value = price;
+
+            }
+
+            function cancelAction() {
+                // Hide all forms
+                document.getElementById("add").style.display = "none";
+                document.getElementById("modify").style.display = "none";
+                document.getElementById("delete").style.display = "none";
+
+                // Show main table
+                document.getElementById("selectedCarsTable").style.display = "block";
+            }
+        </script>
+    </head>
+
+    <body onload='displayCars(cars)'> 
+
+
+        <div id ="search">
+            <legend>Search by ID</legend>
+            <input type="text" id="id" placeHolder="ID">
+            <input type="button" value='Submit' onclick="searchCarsByID(parseInt(document.getElementById('id').value))">
+        </div>
+
+        <div id="selectedCarsTable"></div>
+
+        <div id="controlPanel">
+            <input type="button" value="Add New Car" onclick="addNewCarDisplay()">                
+        </div>
+
+        <div id ="add">
+            <legend>Add</legend>
+            <input type="text" id="addModel" placeHolder="Model"><br>
+            <input type="text" id="addColour" placeHolder="Colour"><br>
+            <input type="text" id="addYear" placeHolder="Year"><br>
+            <input type="text" id="addPrice" placeHolder="Price"><br>
+            <input type="button" value="Submit" onclick="addCar(document.getElementById('addModel').value, document.getElementById('addColour').value, parseInt(document.getElementById('addYear').value), parseInt(document.getElementById('addPrice').value))">
+            <input type="button" value="Cancel" onclick="cancelAction()">
+        </div>
+
+        <div id ="modify">
+            <legend>Modify</legend>
+            <input type="text" id="modifyId" placeHolder="ID"><br>
+            <input type="text" id="modifyModel" placeHolder="Model"><br>
+            <input type="text" id="modifyColour" placeHolder="Colour"><br>
+            <input type="text" id="modifyYear" placeHolder="Year"><br>
+            <input type="text" id="modifyPrice" placeHolder="Price"><br>
+            <input type="button" value="Submit" 
+                   onclick="modifyCar(parseInt(document.getElementById('modifyId').value), document.getElementById('modifyModel').value, document.getElementById('modifyColour').value, parseInt(document.getElementById('modifyYear').value), parseInt(document.getElementById('modifyPrice').value))">
+            <input type="button" value="Cancel" onclick="cancelAction()">
+        </div>
+
+        <div id ="delete">
+            <legend>Delete</legend>
+            <input type="text" id="deleteId" placeHolder="Delete ID">
+            <input type="button" value="Submit" 
+                   onclick="deleteCar(parseInt(document.getElementById('deleteId').value))">
+            <input type="button" value="Cancel" onclick="cancelAction()">
+        </div>
+
+    </body> 
+</html> 

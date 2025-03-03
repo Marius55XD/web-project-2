@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Course notes example code</title>
+        <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+        <meta http-equiv="Content-Language" content="en" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            #employees th:hover
+            {
+                background-color: lightskyblue;              
+                cursor: pointer;
+            }
+            
+            
+        </style>
+        
+        
+        
+        <script>
+            let employees = [{forename: "Ann", surname: "Connolly", role: "IT", salary: 50000, gender: "female"},
+                {forename: "Dennis", surname: "Brown", role: "IT", salary: 45000, gender: "male"},
+                {forename: "Cathy", surname: "Eagan", role: "HR", salary: 55000, gender: "female"},
+                {forename: "Brian", surname: "Anglesey", role: "Accounts", salary: 5000, gender: "male"},
+                {forename: "Emma", surname: "Doherty", role: "HR", salary: 60000, gender: "female"}]
+            
+            
+
+            let keys = Object.keys(employees[0])
+            let isAscending = true
+            let currentKey = ""
+            
+            function sort(key)
+            {
+              
+               if(key !== currentKey )
+               {
+                  isAscending = true
+                   currentKey = key
+               }
+               
+               if(isAscending)
+               {
+                  employees.sort((a, b)=> a[key]< b[key]?-1:1)
+                  isAscending = false
+               }
+               else
+               {
+                  employees.sort((a, b)=> a[key]< b[key]?1:-1) 
+                  isAscending = true
+               }
+        
+        
+                displayTable()
+            }
+ 
+            function displayTable()
+            {
+                let htmlString = `<table>`
+                htmlString += `<tr>`
+                keys.forEach(key => htmlString += `<th onclick ="sort('${key}')">${key}</th>`)
+                htmlString += `</tr>`
+                employees.forEach(employee =>
+                {
+                    htmlString += `<tr>`
+                    keys.forEach(key => htmlString += `<td>${employee[key]}</td>`)
+                    htmlString += `</tr>`
+                })
+
+                htmlString += `</table>`
+                document.getElementById("employees").innerHTML = htmlString
+            }
+        </script>
+    </head>
+
+    <body onload="displayTable()">
+        <div id = "employees">Employee table will be listed here.</div>
+    </body>
+</html>

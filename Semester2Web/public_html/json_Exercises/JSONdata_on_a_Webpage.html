@@ -1,0 +1,46 @@
+
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+
+    <body onload="displayTable()">
+
+        <div id ="display"></div>
+        <script>
+
+            let employees = [{forename: "Ann", surname: "Connolly", role: "IT", salary: 50000},
+                {forename: "Dennis", surname: "Brown", role: "IT", salary: 45000},
+                {forename: "Cathy", surname: "Eagan", role: "HR", salary: 55000},
+                {forename: "Brian", surname: "Anglesey", role: "Accounts", salary: 5000},
+                {forename: "Emma", surname: "Doherty", role: "HR", salary: 60000}]
+
+            let keys = Object.keys(employees[0])
+
+            function displayTable()
+            {
+
+                let htmlString = `<table>`
+
+
+                htmlString += `<tr>`
+                keys.forEach(key => htmlString += `<th>${key}</th>`)
+                htmlString += `<tr>`
+
+                employees.forEach(employee =>
+                {
+                    htmlString += `<tr>`
+                    keys.forEach(key => htmlString += `<td>${employee[key]}</td>`)
+                    htmlString += `</tr>`
+
+                })
+                htmlString += `</table>`
+                document.getElementById("display").innerHTML = htmlString
+
+            }
+
+        </script>
+    </body>
+</html>

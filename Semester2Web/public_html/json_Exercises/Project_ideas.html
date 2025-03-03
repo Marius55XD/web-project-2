@@ -1,0 +1,215 @@
+<html>
+    <head>
+        <title>Recycling Table Website</title>
+
+        <style>
+
+            /* Container to hold both the image and header */
+            .header-container {
+                display: flex;
+                align-items: center;  /* Align items vertically in the center */
+                justify-content: center; /* Align items horizontally in the center */
+                padding: 20px;
+                background-color: #ECF0F1;
+                box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+                border-radius: 5px;
+            }
+
+            /* Header styling */
+            h1 {
+                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+                color: #2C3E50;
+                font-size: 3.5em;
+                text-transform: uppercase;
+                letter-spacing: 5px;
+                margin-left: 20px;  /* Space between the image and text */
+                padding: 20px;
+                display: inline-block;
+                border-radius: 5px;
+            }
+
+            /* Image styling */
+            .header-image {
+                width: 100px;  /* Adjust image size */
+                height: auto;
+                border-radius: 50%;  /* Optional: makes the image round */
+            }
+
+            table
+            {
+                width: 100%;
+                border-collapse: collapse;
+                margin-top: 20px;
+            }
+
+            th, td
+            {
+                border: 1px solid black;
+                padding: 10px;
+                text-align: left;
+            }
+
+            th
+            {
+                background-color: #f2f2f2;
+            }
+            
+            /* Footer styling */
+            footer 
+            {
+                background-image: url('../images/footer_image.jpg'); /* Add the image URL here */
+                background-size: cover; /* Make the image cover the entire footer */
+                background-position: center; /* Center the background image */
+                background-repeat: no-repeat; /* Prevent the image from repeating */
+                color: white;
+                text-align: center;
+                padding: 20px;
+                width: 100%; /* Full width */
+                margin-top: 40px; /* Adjust spacing before footer */
+                box-sizing: border-box; /* Ensures padding is included in the width */
+            }
+
+
+        </style>
+
+        <script>
+            let materials = []
+            MAX_STRING_LENGTH = 50
+
+            window.onload = () =>
+            {
+                let url = `../json/materials.json`      /* name of the JSON file */
+
+                fetch(url)
+                        .then(response => response.json())
+                        .then(jsonData =>
+                        {
+                            materials = jsonData.materials;
+
+                            materials[0].bin_colour = "green"
+                            materials[1].bin_colour = "blue"
+                            materials[2].bin_colour = "green"
+                            materials[3].bin_colour = "green"
+                            materials[4].bin_colour = "brown"
+                            displayTable()
+                        })
+            }
+
+            function displayTable()
+            {
+                displayDiv("dashboard")
+                console.log("materials", materials)
+
+                let htmlString = `<table>`
+
+                htmlString += `<tr>
+                                 <th id="name">Name</th>
+                                 <th id="recycling_process">Process</th>
+                                 <th id="accepted_items">Valid Items</th>
+                                 <th id="non_accepted_items">Not Valid</th>
+                                 <th id="recyclability">Recyclability</th>
+                                 <th id="environmental_impact">Impact</th>
+                                 <th id="actions">Actions</th>
+                               </tr>`
+
+                materials.forEach(material =>
+                {
+                    material.categories.forEach(category =>
+                    {
+                        htmlString += `<tr id=${category.recycling_code} onclick=displayView("${category.recycling_code}")>
+                                          <td>${category.name}</td>               
+                                          <td>${category.recycling_process.substring(0, MAX_STRING_LENGTH)} ...</td>`
+
+                        htmlString += `<td><select>`
+                        category.accepted_items.forEach(accepted_item => htmlString += `<option>${accepted_item}</option>`)
+                        htmlString += `</select></td>`
+
+                        htmlString += `<td><select>`
+                        category.non_accepted_items.forEach(non_accepted_item => htmlString += `<option>${non_accepted_item}</option>`)
+                        htmlString += `</select></td>`
+
+                        htmlString += `<td>${category.recyclability.substring(0, MAX_STRING_LENGTH)} ${category.recyclability.length >= MAX_STRING_LENGTH ? "..." : ""}</td>
+                                          <td>${category.environmental_impact.substring(0, MAX_STRING_LENGTH)} ...</td>
+                                       </tr>`
+                    })
+                })
+
+                htmlString += `</table>`
+
+                document.getElementById("table").innerHTML = htmlString
+            }
+
+            function displayDiv(divID)
+            {
+                document.getElementById("dashboard").style.display = "none"
+                document.getElementById("view").style.display = "none"
+                document.getElementById("add").style.display = "none"
+
+                document.getElementById(divID).style.display = "block"
+            }
+
+            function displayView(categoryID)
+            {
+                displayDiv("view")
+                let categoryToView
+                materials.forEach(material =>
+                {
+                    material.categories.forEach(category =>
+                    {
+                        if (category.recycling_code === categoryID)
+                        {
+                            categoryToView = category
+                        }
+                    })
+                })
+                console.log("categoryToView", categoryToView)
+                console.log("categoryToView.name", categoryToView.name)
+                document.getElementById("categoryName").value = categoryToView.name
+
+                document.getElementById("process").innerHTML = categoryToView.recycling_process
+            }
+        </script>
+    </head>
+
+    <body>
+
+        <div class="header-container">
+            <img src="../images/recycling_icon.png" alt=""/>
+            <h1>Recycling Home Manager</h1>
+        </div>
+
+        <div id="dashboard">
+            <div id="search">
+                <input type="search" value="search">  
+            </div>
+
+            <div id="filters">
+                <div id="type">
+
+                </div>
+            </div>
+
+            <div id="table">
+
+            </div>
+        </div>
+
+        <div id="view">
+            <label for="name">Name:</label><input type ="text" id="categoryName" value="TEST"><br>
+            <label for="Process">Process:</label><textArea id="process"></textArea><br>
+            <div id="accepted_items"></div>
+            <input type="button" value="Close" onclick="displayTable()">
+        </div>
+        
+        <div id="add">
+            Add
+        </div>
+        
+          <!-- Footer Section -->
+        <footer>
+            <p>&copy; 2025 Recycling Table Website | All Rights Reserved</p>
+        </footer>
+
+        
+    </body>
+</html>

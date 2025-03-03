@@ -1,0 +1,19 @@
+#root th
+{
+    background-color: lightslategrey;
+    border: thin solid transparent;
+    width: 100px;
+}
+
+
+#root td
+{
+    text-align: center;
+    background-color: lightgray
+}
+
+#root th:hover
+{
+    background-color:lightskyblue;
+    cursor:pointer;
+}
